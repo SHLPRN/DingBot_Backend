@@ -1,7 +1,12 @@
 import os
+import json
+
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+json_file = open("../secrets.json")
+SECRETS = json.load(json_file)
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = 'media/'
@@ -20,6 +25,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'admin',
+    'product',
 ]
 
 MIDDLEWARE = [
@@ -76,8 +83,12 @@ WSGI_APPLICATION = 'DingBot.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'HOST': SECRETS['HOST'],
+        'PORT': SECRETS['PORT'],
+        'NAME': SECRETS['DATABASE'],
+        'USER': SECRETS['USER'],
+        'PASSWORD': SECRETS['PASSWORD'],
     }
 }
 
