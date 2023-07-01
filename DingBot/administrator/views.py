@@ -42,8 +42,6 @@ def add_product(request):
         product_category.category = Category.objects.get(id=category)
         product_category.save()
     view_num = int(request.POST.get('view_num'))
-    module_num = int(request.POST.get('module_num'))
-    view_list = []
     for order in range(1, view_num + 1):
         view = View()
         view.name = request.POST.get(f'view_{order}_name')
@@ -54,7 +52,13 @@ def add_product(request):
         view.image = handle_image(view_image, os.path.join(VIEW_URL, f'view_{view.id}' +
                                                            os.path.splitext(str(view_image.name))[1]))
         view.save()
-        view_list.append(view)
+    return JsonResponse({'errno': 0, 'msg': '添加产品成功'})
+
+
+@csrf_exempt
+def add_module(request):
+    product = Product.objects.get(id=int(request.POST.get('product_id')))
+    module_num = int(request.POST.get('module_num'))
     for order1 in range(1, module_num + 1):
         module = Module()
         module.name = request.POST.get(f'module_{order1}_name')
@@ -69,18 +73,24 @@ def add_product(request):
             choice.order = order2
             choice.module = module
             choice.save()
-            for order3 in range(1, view_num + 1):
-                choice_image = ChoiceImage()
-                choice_image_image = request.FILES.get(f'module_{order1}_choice_{order2}_view_{order3}_image')
-                choice_image.image = "WAIT"
-                choice_image.choice = choice
-                choice_image.view = view_list[order3 - 1]
-                choice_image.save()
-                choice_image.image = handle_image(choice_image_image,
-                                                  os.path.join(CHOICE_URL, f'choice_image_{choice_image.id}' +
-                                                               os.path.splitext(str(choice_image_image.name))[1]))
-                choice_image.save()
-    return JsonResponse({'errno': 0, 'msg': '新建产品成功'})
+    return JsonResponse({'errno': 0, 'msg': '添加组件成功'})
+
+
+@csrf_exempt
+def add_choice_image(request):
+    view = View.objects.get(id=int(request.POST.get('view_id')))
+    choice = Choice.objects.get(id=int(request.POST.get('choice_id')))
+    choice_image = ChoiceImage()
+    choice_image_image = request.FILES.get('image')
+    choice_image.image = "WAIT"
+    choice_image.choice = choice
+    choice_image.view = view
+    choice_image.save()
+    choice_image.image = handle_image(choice_image_image,
+                                      os.path.join(CHOICE_URL, f'choice_image_{choice_image.id}' +
+                                                   os.path.splitext(str(choice_image_image.name))[1]))
+    choice_image.save()
+    return JsonResponse({'errno': 0, 'msg': '添加可选项视角图成功'})
 
 
 def handle_image(image, path):

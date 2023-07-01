@@ -8,7 +8,7 @@ except ImportError:
 
 
 API_WHITELIST = ["/api/administrator/login/", ]
-ADMIN = ["/api/administrator/addProduct/", ]
+ADMIN = ["/api/administrator/addProduct/", "/api/administrator/addModule/", "/api/administrator/addChoiceImage/", ]
 
 
 class AuthorizeMiddleware(MiddlewareMixin):
