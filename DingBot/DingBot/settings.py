@@ -39,6 +39,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+    'DingBot.middleware.AuthorizeMiddleware',
 ]
 
 # 允许将cookie包含在跨站点HTTP请求中

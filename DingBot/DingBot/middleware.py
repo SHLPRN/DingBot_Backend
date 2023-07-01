@@ -7,8 +7,8 @@ except ImportError:
     MiddlewareMixin = object
 
 
-API_WHITELIST = ["", ]
-ADMIN = ["/api/administrator/login/", "/api/administrator/addProduct/", ]
+API_WHITELIST = ["/api/administrator/login/", ]
+ADMIN = ["/api/administrator/addProduct/", ]
 
 
 class AuthorizeMiddleware(MiddlewareMixin):
