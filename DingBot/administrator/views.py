@@ -93,6 +93,49 @@ def add_choice_image(request):
     return JsonResponse({'errno': 0, 'msg': '添加可选项视角图成功'})
 
 
+@csrf_exempt
+def get_product_list(request):
+    products = Product.objects.all()
+    data = [
+        {
+            'id': product.id,
+            'name': product.name,
+            'price': product.price,
+            'image': product.image,
+        } for product in products
+    ]
+    return JsonResponse({'errno': 0, 'data': data})
+
+
+@csrf_exempt
+def get_product(request):
+    product = Product.objects.get(id=int(request.POST.get('product_id')))
+    views = View.objects.filter(product=product)
+    view_list = [
+        {
+            'id': view.id,
+            'name': view.name,
+        } for view in views
+    ]
+    modules = Module.objects.filter(product=product).order_by('order')
+    module_list = []
+    for module in modules:
+        choices = Choice.objects.filter(module=module).order_by('order')
+        choice_list = [
+            {
+                'id': choice.id,
+                'name': choice.name,
+                'has_view_image': len(ChoiceImage.objects.filter(choice=choice)),
+            } for choice in choices
+        ]
+        module_list.append({
+            'id': module.id,
+            'name': module.name,
+            'choice_list': choice_list,
+        })
+    return JsonResponse({'errno': 0, 'view_list': view_list, 'module_list': module_list})
+
+
 def handle_image(image, path):
     with open('.' + path, 'wb+') as f:
         for chunk in image.chunks():
