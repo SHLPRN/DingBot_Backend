@@ -16,7 +16,7 @@ class AuthorizeMiddleware(MiddlewareMixin):
     def process_request(request):
         if request.path not in API_WHITELIST:
             token = request.META.get('HTTP_TOKEN')
-            if userid is None or token is None:
+            if token is None:
                 return JsonResponse({'errno': 1001, 'msg': "未查询到登录信息"})
             else:
                 identify = "user"
