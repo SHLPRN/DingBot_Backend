@@ -121,13 +121,17 @@ def get_product(request):
     module_list = []
     for module in modules:
         choices = Choice.objects.filter(module=module).order_by('order')
-        choice_list = [
-            {
+        choice_list = []
+        for choice in choices:
+            choice_images = ChoiceImage.objects.filter(choice=choice)
+            choice_view_list = [
+                choice_image.view.name for choice_image in choice_images
+            ]
+            choice_list.append({
                 'id': choice.id,
                 'name': choice.name,
-                'has_view_image': len(ChoiceImage.objects.filter(choice=choice)),
-            } for choice in choices
-        ]
+                'view_list': choice_view_list,
+            })
         module_list.append({
             'id': module.id,
             'name': module.name,
