@@ -125,7 +125,9 @@ def get_product(request):
         for choice in choices:
             choice_images = ChoiceImage.objects.filter(choice=choice)
             choice_view_list = [
-                choice_image.view.name for choice_image in choice_images
+                {
+                    'name': choice_image.view.name
+                } for choice_image in choice_images
             ]
             choice_list.append({
                 'id': choice.id,
