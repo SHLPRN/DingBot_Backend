@@ -72,7 +72,7 @@ class Order(models.Model):
     identifier = models.CharField(max_length=30)
     customer = models.ForeignKey(Customer, models.DO_NOTHING, db_column='customer')
     product = models.ForeignKey('Product', models.DO_NOTHING, db_column='product')
-    configuration = models.ForeignKey(Configuration, models.DO_NOTHING, db_column='configuration')
+    configuration = models.TextField()
     price = models.DecimalField(max_digits=9, decimal_places=2)
     status = models.IntegerField()
 
