@@ -1,69 +1,43 @@
-from django.db.models import Q
+import random
+import datetime
+
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import *
+from utils.token import *
 
 
 @csrf_exempt
-def get_product_list(request):
-    categorys = Category.objects.filter(level=int(request.POST.get('level')))
-    data = []
-    for category in categorys:
-        product_categorys = ProductCategory.objects.filter(category=category)
-        product_list = [
-            {
-                'id': product_category.product.id,
-                'name': product_category.product.name,
-                'image': product_category.product.image,
-            } for product_category in product_categorys
-        ]
-        data.append({
-            'name': category.name,
-            'product_list': product_list,
-        })
-    return JsonResponse({'errno': 0, 'data': data})
+def login(request):
+    token = create_token('customer', int(request.POST.get('customer_id')))
+    return JsonResponse({'errno': 0, 'token': token})
 
 
 @csrf_exempt
-def get_product(request):
-    product = Product.objects.get(id=int(request.POST.get('product_id')))
-    views = View.objects.filter(product=product)
-    modules = Module.objects.filter(product=product).order_by('order')
-    view_list = [
-        {
-            'id': view.id,
-            'name': view.name,
-            'image': view.image,
-        } for view in views
-    ]
-    module_list = []
-    for module in modules:
-        choices = Choice.objects.filter(module=module).order_by('order')
-        choice_list = [
-            {
-                'id': choice.id,
-                'name': choice.name,
-                'price': choice.price,
-            } for choice in choices
-        ]
-        module_list.append({
-            'id': module.id,
-            'name': module.name,
-            'choice_list': choice_list,
-        })
-    data = {
-        'name': product.name,
-        'description': product.description,
-        'price': product.price,
-        'view_list': view_list,
-        'module_list': module_list,
-    }
-    return JsonResponse({'errno': 0, 'data': data})
-
-
-@csrf_exempt
-def get_choice_image(request):
-    choice = Choice.objects.get(id=int(request.POST.get('choice_id')))
-    view = View.objects.get(id=int(request.POST.get('view_id')))
-    choice_image = ChoiceImage.objects.filter(Q(choice=choice) & Q(view=view)).first()
-    return JsonResponse({'errno': 0, 'image': choice_image.image})
+def add_order(request):
+    now_time = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+    day_str = now_time[2:8]
+    time_str = now_time[8:]
+    customer = Customer.objects.get(id=int(get_payload(request.META.get('HTTP_TOKEN'))['customer_id']))
+    customer_str = str(customer.id)[-1:]
+    configuration = request.POST.get('configuration')
+    config_list = configuration.split(',')
+    config_cnt = 0
+    for config in config_list:
+        config_cnt += int(config)
+    config_cnt %= 1000
+    phone = request.POST.get('phone')
+    random_str = str('%03d' % random.randint(0, 999))
+    identifier = day_str + phone[10] + time_str + str(config_cnt).zfill(3) + random_str + customer_str
+    order = Order()
+    order.identifier = identifier
+    order.customer = customer
+    order.product = Product.objects.get(id=int(request.POST.get('product_id')))
+    order.configuration = configuration
+    order.price = float(request.POST.get('price'))
+    order.status = 0
+    order.customer_name = request.POST.get('customer_name')
+    order.phone = phone
+    order.address = request.POST.get('address')
+    order.save()
+    return JsonResponse({'errno': 0, 'msg': '新建订单成功', 'id': order.id, 'identifier': identifier})

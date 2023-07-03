@@ -1,5 +1,6 @@
 import time
 import hashlib
+
 from django.core import signing
 from django.conf import settings
 
@@ -24,16 +25,16 @@ def decrypt(src):
 
 
 # 生成token信息
-def create_token(identity, user_id):
+def create_token(identity, id):
     exp_time = 60 * 60 * 24
     # 1.加密头信息
     header = encrypt(HEADER)
     # 2.构造Payload(有效期1天)
     payload = {}
     if identity == "admin":
-        payload = {"identity": identity, "admin_id": user_id, "iat": time.time(), "exp": time.time() + exp_time}
+        payload = {"identity": identity, "admin_id": id, "iat": time.time(), "exp": time.time() + exp_time}
     else:
-        payload = {"identity": identity, "openid": openid, "iat": time.time(), "exp": time.time() + exp_time}
+        payload = {"identity": identity, "customer_id": id, "iat": time.time(), "exp": time.time() + exp_time}
     payload = encrypt(payload)
     # 3.生成签名
     md5 = hashlib.md5()
