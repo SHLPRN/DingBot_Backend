@@ -69,12 +69,15 @@ class Module(models.Model):
 
 
 class Order(models.Model):
-    identifier = models.CharField(max_length=30)
+    identifier = models.TextField()
     customer = models.ForeignKey(Customer, models.DO_NOTHING, db_column='customer')
     product = models.ForeignKey('Product', models.DO_NOTHING, db_column='product')
     configuration = models.TextField()
     price = models.DecimalField(max_digits=9, decimal_places=2)
     status = models.IntegerField()
+    customer_name = models.CharField(max_length=15)
+    phone = models.CharField(max_length=20)
+    address = models.TextField()
 
     class Meta:
         managed = False
