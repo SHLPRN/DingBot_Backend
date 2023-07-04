@@ -149,7 +149,7 @@ def delete_choice_image(request):
     choice = Choice.objects.get(id=int(request.POST.get('choice_id')))
     choice_image = ChoiceImage.objects.get(Q(view=view) & Q(choice=choice))
     os.remove('.' + choice_image.image)
-    # choice_image.delete()
+    choice_image.delete()
     return JsonResponse({'errno': 0, 'msg': '删除成功'})
 
 
