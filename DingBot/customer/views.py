@@ -228,3 +228,40 @@ def trans_xml_to_dict(data_xml):
     for child in root:
         data_dict[child.tag] = child.text
     return data_dict
+
+
+@csrf_exempt
+def get_order_list(request):
+    customer = Customer.objects.get(id=int(get_payload(request.META.get('HTTP_TOKEN'))['customer_id']))
+    orders = Order.objects.filter(customer=customer).order_by('-time')
+    data = [
+        {
+            'id': order.id,
+            'identifier': order.identifier,
+            'status': order.status,
+            'time': str(order.time)[:10],
+            'customer_name': order.customer_name,
+            'price': order.price,
+        } for order in orders
+    ]
+    return JsonResponse({'errno': 0, 'data': data})
+
+
+@csrf_exempt
+def get_order_info(request):
+    order = Order.objects.get(id=int(request.POST.get('order_id')))
+    return JsonResponse({
+        'errno': 0,
+        'identifier': order.identifier,
+        'product_info': {
+            'id': order.product.id,
+            'name': order.product.name,
+        },
+        'configuration': order.configuration,
+        'price': order.price,
+        'status': order.status,
+        'customer_name': order.customer_name,
+        'phone': order.phone,
+        'address': order.address,
+        'time': order.time.strftime("%Y-%m-%d %H:%M:%S")
+    })

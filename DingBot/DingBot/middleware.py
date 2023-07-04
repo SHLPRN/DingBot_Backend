@@ -12,7 +12,8 @@ API_WHITELIST = ["/api/administrator/login/", "/api/product/getProductList/", "/
 ADMIN = ["/api/administrator/addProduct/", "/api/administrator/addModule/", "/api/administrator/addChoiceImage/",
          "/api/administrator/getProductList/", "/api/administrator/getProduct/",
          "/api/administrator/deleteChoiceImage/", "/api/administrator/adminCheckToken/",
-         "/api/administrator/getOrderList/", "/api/administrator/getOrderInfo/", ]
+         "/api/administrator/getOrderList/", "/api/administrator/searchOrder/",
+         "/api/administrator/getOrderInfo/", ]
 
 
 class AuthorizeMiddleware(MiddlewareMixin):

@@ -10,5 +10,6 @@ urlpatterns = [
     path('getProduct/', get_product, name='getProduct'),
     path('deleteChoiceImage/', delete_choice_image, name='deleteChoiceImage'),
     path('getOrderList/', get_order_list, name='getOrderList'),
+    path('searchOrder/', search_order, name='searchOrder'),
     path('getOrderInfo/', get_order_info, name='getOrderInfo'),
 ]

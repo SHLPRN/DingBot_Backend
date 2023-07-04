@@ -155,7 +155,7 @@ def delete_choice_image(request):
 
 @csrf_exempt
 def get_order_list(request):
-    orders = Order.objects.all()
+    orders = Order.objects.all().order_by('-time')
     data = [
         {
             'id': order.id,
@@ -167,6 +167,24 @@ def get_order_list(request):
         } for order in orders
     ]
     return JsonResponse({'errno': 0, 'data': data})
+
+
+@csrf_exempt
+def search_order(request):
+    orders = Order.objects.filter(identifier=request.POST.get('identifier'))
+    if len(orders) == 0:
+        return JsonResponse({'errno': 3001, 'msg': '订单不存在'})
+    order = orders.first()
+    return JsonResponse({
+        'errno': 0,
+        'msg': '检索成功',
+        'id': order.id,
+        'identifier': order.identifier,
+        'status': order.status,
+        'time': str(order.time)[:10],
+        'customer_name': order.customer_name,
+        'price': order.price,
+    })
 
 
 @csrf_exempt
