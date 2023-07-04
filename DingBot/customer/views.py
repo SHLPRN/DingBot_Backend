@@ -22,15 +22,17 @@ def login(request):
     openid = data["openid"]
     customers = Customer.objects.filter(openid=openid)
     customer = None
+    msg = '登录成功'
     if len(customers) == 0:
         new_customer = Customer()
         new_customer.openid = openid
         new_customer.save()
         customer = new_customer
+        msg = '注册成功'
     else:
         customer = customers.first()
     token = create_token('customer', customer.id)
-    return JsonResponse({'errno': 0, 'token': token})
+    return JsonResponse({'errno': 0, 'msg': msg, 'token': token})
 
 
 @csrf_exempt
