@@ -11,7 +11,7 @@ API_WHITELIST = ["/api/administrator/login/", "/api/product/getProductList/", "/
                  "/api/product/getChoiceImage/", "/api/customer/login/", ]
 ADMIN = ["/api/administrator/addProduct/", "/api/administrator/addModule/", "/api/administrator/addChoiceImage/",
          "/api/administrator/getProductList/", "/api/administrator/getProduct/",
-         "/api/administrator/deleteChoiceImage/", "/api/adminCheckToken/", ]
+         "/api/administrator/deleteChoiceImage/", "/api/administrator/adminCheckToken/", ]
 
 
 class AuthorizeMiddleware(MiddlewareMixin):
@@ -27,7 +27,8 @@ class AuthorizeMiddleware(MiddlewareMixin):
                     identify = 'admin'
                 status = check_token(identify, token)
                 if status == 0:
-                    if request.path == '/api/adminCheckToken/' or request.path == '/api/checkToken/':
+                    if request.path == '/api/administrator/adminCheckToken/' or \
+                            request.path == '/api/customer/checkToken/':
                         return JsonResponse({'errno': 0, 'msg': '成功'})
                     else:
                         pass
