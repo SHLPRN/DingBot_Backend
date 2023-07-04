@@ -69,7 +69,7 @@ class Module(models.Model):
 
 
 class Order(models.Model):
-    identifier = models.TextField()
+    identifier = models.CharField(max_length=20)
     customer = models.ForeignKey(Customer, models.DO_NOTHING, db_column='customer')
     product = models.ForeignKey('Product', models.DO_NOTHING, db_column='product')
     configuration = models.TextField()
@@ -78,6 +78,7 @@ class Order(models.Model):
     customer_name = models.CharField(max_length=15)
     phone = models.CharField(max_length=20)
     address = models.TextField()
+    time = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         managed = False

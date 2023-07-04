@@ -8,10 +8,11 @@ except ImportError:
 
 
 API_WHITELIST = ["/api/administrator/login/", "/api/product/getProductList/", "/api/product/getProduct/",
-                 "/api/product/getChoiceImage/", "/api/customer/login/", ]
+                 "/api/product/getChoiceImage/", "/api/customer/login/", "/api/customer/payResult/", ]
 ADMIN = ["/api/administrator/addProduct/", "/api/administrator/addModule/", "/api/administrator/addChoiceImage/",
          "/api/administrator/getProductList/", "/api/administrator/getProduct/",
-         "/api/administrator/deleteChoiceImage/", "/api/administrator/adminCheckToken/", ]
+         "/api/administrator/deleteChoiceImage/", "/api/administrator/adminCheckToken/",
+         "/api/administrator/getOrderList/", "/api/administrator/getOrderInfo/",]
 
 
 class AuthorizeMiddleware(MiddlewareMixin):
