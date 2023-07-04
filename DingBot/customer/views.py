@@ -1,6 +1,8 @@
 import random
+import requests
 import datetime
 
+from django.conf import settings
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import *
@@ -9,7 +11,20 @@ from utils.token import *
 
 @csrf_exempt
 def login(request):
-    token = create_token('customer', int(request.POST.get('customer_id')))
+    url = 'https://api.weixin.qq.com/sns/oauth2/access_token'
+    params = {
+        'appid': settings.SECRETS['APP_ID'],
+        'secret': settings.SECRETS['APP_SECRET'],
+        'code': request.POST.get('code'),
+        'grant_type': 'authorization_code'
+    }
+    data = requests.get(url, params=params).json()
+    openid = data["openid"]
+    if len(Customer.objects.get(openid=openid)) == 0:
+        customer = Customer()
+        customer.openid = openid
+        customer.save()
+    token = create_token('customer', openid)
     return JsonResponse({'errno': 0, 'token': token})
 
 
