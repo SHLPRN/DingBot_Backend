@@ -20,11 +20,16 @@ def login(request):
     }
     data = requests.get(url, params=params).json()
     openid = data["openid"]
-    if len(Customer.objects.get(openid=openid)) == 0:
-        customer = Customer()
-        customer.openid = openid
-        customer.save()
-    token = create_token('customer', openid)
+    customers = Customer.objects.filter(openid=openid)
+    customer = None
+    if len(customers) == 0:
+        new_customer = Customer()
+        new_customer.openid = openid
+        new_customer.save()
+        customer = new_customer
+    else:
+        customer = customers.first()
+    token = create_token('customer', customer.id)
     return JsonResponse({'errno': 0, 'token': token})
 
 
