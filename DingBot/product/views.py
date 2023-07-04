@@ -1,4 +1,4 @@
-from django.db.models import Q
+from django.db.models import Q, Max
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import *
@@ -7,21 +7,30 @@ from .models import *
 @csrf_exempt
 def get_product_list(request):
     categorys = Category.objects.filter(level=int(request.POST.get('level')))
+    level_num = Category.objects.all().aggregate(Max('level'))['level__max']
     data = []
     for category in categorys:
         product_categorys = ProductCategory.objects.filter(category=category)
-        product_list = [
-            {
+        product_list = []
+        for product_category in product_categorys:
+            mid_categorys = ProductCategory.objects.filter(product=product_category.product)
+            category_list = {}
+            i = 1
+            for mid_category in mid_categorys:
+                category_list[f'level_{i}'] = mid_category.category.name
+                i += 1
+            product_list.append({
                 'id': product_category.product.id,
+                'category': category_list,
                 'name': product_category.product.name,
                 'image': product_category.product.image,
-            } for product_category in product_categorys
-        ]
+                'lowprice': product_category.product.price,
+            })
         data.append({
             'name': category.name,
             'product_list': product_list,
         })
-    return JsonResponse({'errno': 0, 'data': data})
+    return JsonResponse({'errno': 0, 'level_num': level_num, 'data': data})
 
 
 @csrf_exempt
