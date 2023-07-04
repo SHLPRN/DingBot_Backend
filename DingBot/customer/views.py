@@ -63,3 +63,8 @@ def add_order(request):
     order.address = request.POST.get('address')
     order.save()
     return JsonResponse({'errno': 0, 'msg': '新建订单成功', 'id': order.id, 'identifier': identifier})
+
+
+@csrf_exempt
+def pay_order(request):
+    pass

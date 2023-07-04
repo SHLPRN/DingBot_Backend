@@ -1,6 +1,7 @@
 import time
 import os.path
 
+from django.db.models import Q
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import *
@@ -140,6 +141,16 @@ def get_product(request):
             'choice_list': choice_list,
         })
     return JsonResponse({'errno': 0, 'view_list': view_list, 'module_list': module_list})
+
+
+@csrf_exempt
+def delete_choice_image(request):
+    view = View.objects.get(id=int(request.POST.get('view_id')))
+    choice = Choice.objects.get(id=int(request.POST.get('choice_id')))
+    choice_image = ChoiceImage.objects.get(Q(view=view) & Q(choice=choice))
+    os.remove('.' + choice_image.image)
+    # choice_image.delete()
+    return JsonResponse({'errno': 0, 'msg': '删除成功'})
 
 
 def handle_image(image, path):
