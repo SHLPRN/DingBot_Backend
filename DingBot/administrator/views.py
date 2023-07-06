@@ -173,7 +173,7 @@ def get_order_list(request):
 def search_order(request):
     orders = Order.objects.filter(identifier=request.POST.get('identifier'))
     if len(orders) == 0:
-        return JsonResponse({'errno': 3001, 'msg': '订单不存在'})
+        return JsonResponse({'errno': 2001, 'msg': '订单不存在'})
     order = orders.first()
     return JsonResponse({
         'errno': 0,

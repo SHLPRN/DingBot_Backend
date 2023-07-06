@@ -86,7 +86,7 @@ def add_order(request):
 def pay_order(request):
     order = Order.objects.get(id=int(request.POST.get('order_id')))
     if order.status != 0:
-        return JsonResponse({'errno': 3002, 'msg': '订单已支付，请勿重复支付'})
+        return JsonResponse({'errno': 2002, 'msg': '订单已支付，请勿重复支付'})
     total_price = float(order.price)                # 订单总价
     order_name = order.product.name                 # 订单名
     order_detail = f'DingBotBoards-{order_name}'    # 订单描述
