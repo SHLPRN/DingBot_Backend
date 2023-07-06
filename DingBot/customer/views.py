@@ -14,7 +14,7 @@ from .models import *
 from utils.token import *
 
 
-notify_url = f"{settings.SECRETS['DOMIN']}/customer/payResult/"  # 回调函数，完整路由
+notify_url = f"{settings.SECRETS['DOMIN']}/customer/payResult/" # 回调函数，完整路由
 trade_type = 'NATIVE'                   # 交易方式（扫码模式二）
 APP_ID = settings.SECRETS['APP_ID']
 MCH_ID = settings.SECRETS['MCH_ID']     # 商户号
@@ -85,6 +85,8 @@ def add_order(request):
 @csrf_exempt
 def pay_order(request):
     order = Order.objects.get(id=int(request.POST.get('order_id')))
+    if order.status != 0:
+        return JsonResponse({'errno': 3002, 'msg': '订单已支付，请勿重复支付'})
     total_price = float(order.price)                # 订单总价
     order_name = order.product.name                 # 订单名
     order_detail = f'DingBotBoards-{order_name}'    # 订单描述
