@@ -136,6 +136,7 @@ def pay_result(request):
         order = Order.objects.get(identifier=order_identifier)
         order.status = 1
         order.save()
+        os.remove('.' + os.path.join(WXPAY_URL, order_identifier + '.png'))
         # 返回接收结果给微信，否则微信会每隔8分钟发送post请求
         return HttpResponse(trans_dict_to_xml({'return_code': 'SUCCESS', 'return_msg': 'OK'}))
     return HttpResponse(trans_dict_to_xml({'return_code': 'FAIL', 'return_msg': 'SIGNERROR'}))
