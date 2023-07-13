@@ -73,6 +73,12 @@ def add_module(request):
             choice.price = float(request.POST.get(f'module_{order1}_choice_{order2}_price'))
             choice.order = order2
             choice.module = module
+            choice_has_choice = int(request.POST.get(f'module_{order1}_choice_{order2}_has_choice'))
+            choice.has_choice = choice_has_choice
+            choice_choice = {"choice_num": 0}
+            if choice_has_choice == 1:
+                choice_choice = request.POST.get(f'module_{order1}_choice_{order2}_choice_dict')
+            choice.choice = str(choice_choice)
             choice.save()
     return JsonResponse({'errno': 0, 'msg': '添加组件成功'})
 
@@ -81,16 +87,27 @@ def add_module(request):
 def add_choice_image(request):
     view = View.objects.get(id=int(request.POST.get('view_id')))
     choice = Choice.objects.get(id=int(request.POST.get('choice_id')))
-    choice_image = ChoiceImage()
+    has_choice = int(request.POST.get('has_choice'))
     choice_image_image = request.FILES.get('image')
-    choice_image.image = "WAIT"
-    choice_image.choice = choice
-    choice_image.view = view
-    choice_image.save()
-    choice_image.image = handle_image(choice_image_image,
-                                      os.path.join(CHOICE_URL, f'choice_image_{choice_image.id}' +
-                                                   os.path.splitext(str(choice_image_image.name))[1]))
-    choice_image.save()
+    if has_choice == 0:
+        choice_image = ChoiceImage()
+        choice_image.image = "WAIT"
+        choice_image.choice = choice
+        choice_image.view = view
+        choice_image.save()
+        choice_image.image = handle_image(choice_image_image,
+                                          os.path.join(CHOICE_URL, f'choice_image_{choice_image.id}' +
+                                                       os.path.splitext(str(choice_image_image.name))[1]))
+        choice_image.save()
+    else:
+        choice_order = request.POST.get('choice_order')
+        choice_dict = eval(choice.choice)
+        choice_dict[choice_order]['view'][str(view.id)] = handle_image(choice_image_image,
+                                          os.path.join(CHOICE_URL,
+                                                       f'choice_image_{choice.id}_{choice_order}_{view.id}' +
+                                                       os.path.splitext(str(choice_image_image.name))[1]))
+        choice.choice = str(choice_dict)
+        choice.save()
     return JsonResponse({'errno': 0, 'msg': '添加可选项视角图成功'})
 
 
@@ -124,17 +141,44 @@ def get_product(request):
         choices = Choice.objects.filter(module=module).order_by('order')
         choice_list = []
         for choice in choices:
-            choice_images = ChoiceImage.objects.filter(choice=choice)
-            choice_view_list = [
-                {
-                    'name': choice_image.view.name
-                } for choice_image in choice_images
-            ]
-            choice_list.append({
-                'id': choice.id,
-                'name': choice.name,
-                'view_list': choice_view_list,
-            })
+            has_choice = choice.has_choice
+            if has_choice == 0:
+                choice_images = ChoiceImage.objects.filter(choice=choice)
+                choice_view_list = [
+                    {
+                        'id': choice_image.view.id,
+                        'name': choice_image.view.name
+                    } for choice_image in choice_images
+                ]
+                choice_list.append({
+                    'id': choice.id,
+                    'name': choice.name,
+                    'has_choice': choice.has_choice,
+                    'view_list': choice_view_list,
+                })
+            else:
+                choice_choice = eval(choice.choice)
+                choice_choice_list = {
+                    'choice_num': choice_choice['choice_num']
+                }
+                for i in range(1, choice_choice['choice_num'] + 1):
+                    mid_view_list = []
+                    for view_id in choice_choice[f'{i}']['view']:
+                        view = View.objects.get(id=int(view_id))
+                        mid_view_list.append({
+                                'id': view.id,
+                                'name': view.name
+                            })
+                    choice_choice_list[f'{i}'] = {
+                        'name': choice_choice[f'{i}']['name'],
+                        'view_list': mid_view_list
+                    }
+                choice_list.append({
+                    'id': choice.id,
+                    'name': choice.name,
+                    'has_choice': choice.has_choice,
+                    'choice_list': choice_choice_list,
+                })
         module_list.append({
             'id': module.id,
             'name': module.name,

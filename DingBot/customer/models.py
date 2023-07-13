@@ -24,6 +24,8 @@ class Choice(models.Model):
     price = models.DecimalField(max_digits=9, decimal_places=2)
     order = models.IntegerField()
     module = models.ForeignKey('Module', models.DO_NOTHING, db_column='module')
+    choice = models.TextField(blank=True, null=True)
+    has_choice = models.IntegerField(blank=True, null=True)
 
     class Meta:
         managed = False
