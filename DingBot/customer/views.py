@@ -62,7 +62,8 @@ def add_order(request):
     config_list = configuration.split(',')
     config_cnt = 0
     for config in config_list:
-        config_cnt += int(config)
+        config_num = int(config)
+        config_cnt += (config_num // 100 + config_num % 100)
     config_cnt %= 1000
     phone = request.POST.get('phone')
     random_str = str('%03d' % random.randint(0, 999))
