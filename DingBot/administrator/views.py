@@ -191,9 +191,18 @@ def get_product(request):
 def delete_choice_image(request):
     view = View.objects.get(id=int(request.POST.get('view_id')))
     choice = Choice.objects.get(id=int(request.POST.get('choice_id')))
-    choice_image = ChoiceImage.objects.get(Q(view=view) & Q(choice=choice))
-    os.remove('.' + choice_image.image)
-    choice_image.delete()
+    has_choice = int(request.POST.get('has_choice'))
+    if has_choice == 0:
+        choice_image = ChoiceImage.objects.get(Q(view=view) & Q(choice=choice))
+        os.remove('.' + choice_image.image)
+        choice_image.delete()
+    else:
+        choice_choice = eval(choice.choice)
+        choice_image = choice_choice[request.POST.get('choice_order')]['view'][f'{view.id}']
+        os.remove('.' + choice_image)
+        del choice_choice[request.POST.get('choice_order')]['view'][f'{view.id}']
+        choice.choice = str(choice_choice)
+        choice.save()
     return JsonResponse({'errno': 0, 'msg': '删除成功'})
 
 
