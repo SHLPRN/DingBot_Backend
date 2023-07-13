@@ -86,5 +86,11 @@ def get_product(request):
 def get_choice_image(request):
     choice = Choice.objects.get(id=int(request.POST.get('choice_id')))
     view = View.objects.get(id=int(request.POST.get('view_id')))
-    choice_image = ChoiceImage.objects.filter(Q(choice=choice) & Q(view=view)).first()
-    return JsonResponse({'errno': 0, 'image': choice_image.image})
+    has_choice = int(request.POST.get('has_choice'))
+    if has_choice == 0:
+        choice_image = ChoiceImage.objects.filter(Q(choice=choice) & Q(view=view)).first()
+        return JsonResponse({'errno': 0, 'image': choice_image.image})
+    else:
+        choice_choice = eval(choice.choice)
+        choice_image = choice_choice[request.POST.get('choice_order')]['view'][f'{view.id}']
+        return JsonResponse({'errno': 0, 'image': choice_image})
