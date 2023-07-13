@@ -48,13 +48,25 @@ def get_product(request):
     module_list = []
     for module in modules:
         choices = Choice.objects.filter(module=module).order_by('order')
-        choice_list = [
-            {
+        choice_list = []
+        for choice in choices:
+            choice_choice_list = []
+            if choice.has_choice == 1:
+                choice_coice = eval(choice.choice)
+                for i in range(1, choice_coice['choice_num'] + 1):
+                    mid_choice = choice_coice[f'{i}']
+                    choice_choice_list.append({
+                        'order': i,
+                        'name': mid_choice['name'],
+                        'price': mid_choice['price']
+                    })
+            choice_list.append({
                 'id': choice.id,
                 'name': choice.name,
                 'price': choice.price,
-            } for choice in choices
-        ]
+                'has_choice': choice.has_choice,
+                'choice_list': choice_choice_list
+            })
         module_list.append({
             'id': module.id,
             'name': module.name,
