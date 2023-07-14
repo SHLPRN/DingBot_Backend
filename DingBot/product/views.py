@@ -47,11 +47,13 @@ def get_product(request):
     ]
     module_list = []
     for module in modules:
+        module_has_choice = 0
         choices = Choice.objects.filter(module=module).order_by('order')
         choice_list = []
         for choice in choices:
             choice_choice_list = []
             if choice.has_choice == 1:
+                module_has_choice = 1
                 choice_coice = eval(choice.choice)
                 for i in range(1, choice_coice['choice_num'] + 1):
                     mid_choice = choice_coice[f'{i}']
@@ -70,6 +72,7 @@ def get_product(request):
         module_list.append({
             'id': module.id,
             'name': module.name,
+            'has_choice': module_has_choice,
             'choice_list': choice_list,
         })
     data = {
