@@ -165,9 +165,7 @@ def get_product(request):
                 })
             else:
                 choice_choice = eval(choice.choice)
-                choice_choice_list = {
-                    'choice_num': choice_choice['choice_num']
-                }
+                choice_choice_list = []
                 for i in range(1, choice_choice['choice_num'] + 1):
                     mid_view_list = []
                     for view_id in choice_choice[f'{i}']['view']:
@@ -176,10 +174,10 @@ def get_product(request):
                                 'id': view.id,
                                 'name': view.name
                             })
-                    choice_choice_list[f'{i}'] = {
+                    choice_choice_list.append({
                         'name': choice_choice[f'{i}']['name'],
                         'view_list': mid_view_list
-                    }
+                    })
                 choice_list.append({
                     'id': choice.id,
                     'name': choice.name,
