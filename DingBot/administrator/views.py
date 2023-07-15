@@ -75,9 +75,16 @@ def add_module(request):
             choice.module = module
             choice_has_choice = int(request.POST.get(f'module_{order1}_choice_{order2}_has_choice'))
             choice.has_choice = choice_has_choice
-            choice_choice = {"choice_num": 0}
+            choice_choice = {'choice_num': 0}
             if choice_has_choice == 1:
-                choice_choice = request.POST.get(f'module_{order1}_choice_{order2}_choice_dict')
+                choice_choice_num = int(request.POST.get(f'module_{order1}_choice_{order2}_choice_num'))
+                choice_choice['choice_num'] = choice_choice_num
+                for order3 in range(1, choice_choice_num + 1):
+                    choice_choice[f'{order3}'] = {
+                        'name': request.POST.get(f'module_{order1}_choice_{order2}_choice_{order3}_name'),
+                        'price': float(request.POST.get(f'module_{order1}_choice_{order2}_choice_{order3}_price')),
+                        'view': {}
+                    }
             choice.choice = str(choice_choice)
             choice.save()
     return JsonResponse({'errno': 0, 'msg': '添加组件成功'})
