@@ -122,3 +122,9 @@ secrets.json
 
 # media
 media
+
+# uwsgi.ini
+uwsgi.ini
+
+# DingBot.conf
+DingBot.conf
