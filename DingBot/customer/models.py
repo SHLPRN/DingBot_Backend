@@ -42,16 +42,6 @@ class ChoiceImage(models.Model):
         db_table = 'ChoiceImage'
 
 
-class Configuration(models.Model):
-    identifier = models.CharField(max_length=30)
-    config = models.CharField(max_length=50)
-    product = models.ForeignKey('Product', models.DO_NOTHING, db_column='product')
-
-    class Meta:
-        managed = False
-        db_table = 'Configuration'
-
-
 class Customer(models.Model):
     openid = models.CharField(max_length=50)
 
