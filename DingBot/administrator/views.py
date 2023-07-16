@@ -60,10 +60,11 @@ def add_product(request):
 def add_module(request):
     product = Product.objects.get(id=int(request.POST.get('product_id')))
     module_num = int(request.POST.get('module_num'))
+    now_num = len(Module.objects.filter(product=product))
     for order1 in range(1, module_num + 1):
         module = Module()
         module.name = request.POST.get(f'module_{order1}_name')
-        module.order = order1
+        module.order = order1 + now_num
         module.product = product
         module.save()
         choice_num = int(request.POST.get(f'module_{order1}_choice_num'))
