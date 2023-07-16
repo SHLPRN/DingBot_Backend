@@ -245,7 +245,7 @@ def get_order_list(request):
             'status': order.status,
             'time': str(order.time)[:10],
             'customer_name': order.customer_name,
-            'price': order.price,
+            'price': float(order.price),
         } for order in orders
     ]
     return JsonResponse({'errno': 0, 'data': data})
@@ -262,7 +262,7 @@ def get_order_info(request):
             'name': order.product.name,
         },
         'configuration': order.configuration,
-        'price': order.price,
+        'price': float(order.price),
         'status': order.status,
         'customer_name': order.customer_name,
         'phone': order.phone,

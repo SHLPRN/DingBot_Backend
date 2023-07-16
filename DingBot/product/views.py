@@ -24,7 +24,7 @@ def get_product_list(request):
                 'category': category_list,
                 'name': product_category.product.name,
                 'image': product_category.product.image,
-                'lowprice': product_category.product.price,
+                'lowprice': float(product_category.product.price),
             })
         data.append({
             'name': category.name,
@@ -60,12 +60,12 @@ def get_product(request):
                     choice_choice_list.append({
                         'order': i,
                         'name': mid_choice['name'],
-                        'price': mid_choice['price']
+                        'price': float(mid_choice['price'])
                     })
             choice_list.append({
                 'id': choice.id,
                 'name': choice.name,
-                'price': choice.price,
+                'price': float(choice.price),
                 'has_choice': choice.has_choice,
                 'choice_list': choice_choice_list
             })
@@ -78,7 +78,7 @@ def get_product(request):
     data = {
         'name': product.name,
         'description': product.description,
-        'price': product.price,
+        'price': float(product.price),
         'view_list': view_list,
         'module_list': module_list,
     }
