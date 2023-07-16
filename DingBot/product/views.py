@@ -91,9 +91,15 @@ def get_choice_image(request):
     view = View.objects.get(id=int(request.POST.get('view_id')))
     has_choice = int(request.POST.get('has_choice'))
     if has_choice == 0:
-        choice_image = ChoiceImage.objects.filter(Q(choice=choice) & Q(view=view)).first()
+        choice_images = ChoiceImage.objects.filter(Q(choice=choice) & Q(view=view))
+        if len(choice_images) == 0:
+            return JsonResponse({'errno': 0, 'image': None})
+        choice_image = choice_images.first()
         return JsonResponse({'errno': 0, 'image': choice_image.image})
     else:
         choice_choice = eval(choice.choice)
-        choice_image = choice_choice[request.POST.get('choice_order')]['view'][f'{view.id}']
+        view_list = choice_choice[request.POST.get('choice_order')]['view']
+        choice_image = None
+        if f'{view.id}' in view_list:
+            choice_image = view_list[f'{view.id}']
         return JsonResponse({'errno': 0, 'image': choice_image})
