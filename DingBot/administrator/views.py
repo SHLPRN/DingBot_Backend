@@ -22,7 +22,7 @@ def login(request):
         return JsonResponse({'errno': 1004, 'msg': '用户不存在'})
     administrator = administrators.first()
     token = create_token('admin', administrator.id)
-    return JsonResponse({'errno': 0, 'token': token})
+    return JsonResponse({'errno': 0, 'msg': '登录成功', 'token': token})
 
 
 @csrf_exempt
