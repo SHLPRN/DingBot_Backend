@@ -14,7 +14,7 @@ from .models import *
 from utils.token import *
 
 
-notify_url = f"{settings.SECRETS['DOMIN']}/customer/payResult/" # 回调函数，完整路由
+notify_url = f"{settings.SECRETS['DOMIN']}/api/customer/payResult/" # 回调函数，完整路由
 trade_type = 'NATIVE'                   # 交易方式
 APP_ID = settings.SECRETS['APP_ID']
 MCH_ID = settings.SECRETS['MCH_ID']     # 商户号
