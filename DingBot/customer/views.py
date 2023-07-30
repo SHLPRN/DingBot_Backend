@@ -72,8 +72,9 @@ def add_order(request):
             price += float(choice.price)
     config_cnt %= 1000
     phone = request.POST.get('phone')
+    phone_num_cnt = len(phone)
     random_str = str('%03d' % random.randint(0, 999))
-    identifier = day_str + phone[10] + time_str + str(config_cnt).zfill(3) + random_str + customer_str
+    identifier = day_str + phone[phone_num_cnt - 1] + time_str + str(config_cnt).zfill(3) + random_str + customer_str
     order = Order()
     order.identifier = identifier
     order.customer = customer
