@@ -31,16 +31,16 @@ def create_token(identity, id):
     header = encrypt(HEADER)
     # 2.构造Payload(有效期1天)
     payload = {}
-    if identity == "admin":
-        payload = {"identity": identity, "admin_id": id, "iat": time.time(), "exp": time.time() + exp_time}
+    if identity == 'admin':
+        payload = {'identity': identity, 'admin_id': id, 'iat': time.time(), 'exp': time.time() + exp_time}
     else:
-        payload = {"identity": identity, "customer_id": id, "iat": time.time(), "exp": time.time() + exp_time}
+        payload = {'identity': identity, 'customer_id': id, 'iat': time.time(), 'exp': time.time() + exp_time}
     payload = encrypt(payload)
     # 3.生成签名
     md5 = hashlib.md5()
-    md5.update(("%s.%s" % (header, payload)).encode())
+    md5.update(('%s.%s' % (header, payload)).encode())
     signature = md5.hexdigest()
-    token = "%s.%s.%s" % (header, payload, signature)
+    token = '%s.%s.%s' % (header, payload, signature)
     return token
 
 
