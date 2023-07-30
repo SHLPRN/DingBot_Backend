@@ -19,7 +19,7 @@ trade_type = 'NATIVE'                   # 交易方式
 APP_ID = settings.SECRETS['APP_ID']
 MCH_ID = settings.SECRETS['MCH_ID']     # 商户号
 API_KEY = settings.SECRETS['API_KEY']
-UFDODER_URL = "https://api.mch.weixin.qq.com/pay/unifiedorder"  # 微信下单api
+UFDODER_URL = "https://api.mch.weixin.qq.com/pay/unifiedorder"      # 微信下单api
 CREATE_IP = settings.SECRETS['HOST']    # 服务器IP
 WXPAY_URL = "/media/wxpay/"             # 存放支付二维码的路径
 
@@ -61,9 +61,15 @@ def add_order(request):
     configuration = request.POST.get('configuration')
     config_list = configuration.split(',')
     config_cnt = 0
+    price = 0.0
     for config in config_list:
         config_num = int(config)
         config_cnt += (config_num // 100 + config_num % 100)
+        choice = Choice.objects.get(id=config_num // 100)
+        if choice.has_choice == 1:
+            price += eval(choice.choice)[f'{config_num % 100}']['price']
+        else:
+            price += float(choice.price)
     config_cnt %= 1000
     phone = request.POST.get('phone')
     random_str = str('%03d' % random.randint(0, 999))
@@ -73,7 +79,9 @@ def add_order(request):
     order.customer = customer
     order.product = Product.objects.get(id=int(request.POST.get('product_id')))
     order.configuration = configuration
-    order.price = float(request.POST.get('price'))
+    if float(request.POST.get('price')) != price:
+        return JsonResponse({'errno': 2004, 'msg': '订单金额有误'})
+    order.price = price
     order.status = 0
     order.customer_name = request.POST.get('customer_name')
     order.phone = phone
